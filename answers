@@ -1,0 +1,45 @@
+1.high availability
+
+They are always a pair of namenode on active node standby.when there is any active node failure the stand by takes over the control 
+It adds support for deploying two Name Nodes in an active/passive configuration. 
+This is a common configuration for highly-available distributed systems, and HDFS’s architecture lends itself well to this design.
+Even in a non-HA configuration, HDFS already requires both a Name Node and another node with similar hardware specs which performs checkpointing operations for the Name Node. The design of the HA Name Node is such that the passive Name Node is capable of performing this checkpointing role, 
+thus requiring no additional Hadoop server machines beyond what HDFS already requires.
+
+
+2.checkpointing
+
+explicit merging of edit logs to FS image is called checkpointing.the merging offsimage and edits is necessary because the fsimage contains
+metadata and edit contains the change in the HDFS metadata.To get the exact view of HDFS structure boh must be merged.
+clusters come down one's in every 24 hrs this is a long time for the FSImage to be updated.
+
+With checkpointing it is done with a span of 1-2 hrs.
+
+And as the edits will be too large with time and namenode's start up time will be too long hence the secondary namenode does this work also this merge 
+needs to take place periodically.
+ 
+3.hdfs federation
+NameNode is a single point of failure.A secondary NameNode cannot act as a NameNode, as it should be on a high-end machine.
+In the HDFS Federation, we use multiple NameNodes, each storing the fsimage,
+edits.
+In the HDFS Federation, there are multiple NameNodes, each storing the metadata.
+Blocks for files belonging to a namespace is called a block pool.
+If one NameNode fails, a namespace volume managed by an other namenode is still
+accessible. So the entire cluster doesn’t become inaccessible.
+
+4.configuration files
+
+1)Core-site.xml
+2)HDFS-site.xml
+3)YARN-site.xml
+4)xml
+
+
+We can override the default properties by configuring the above .xml files.
+For example , the default replication factor(3) can be configured using hdfs-site.xml
+The core-site.xml includes-
+Some of the important properties are:
+
+Configuring the name node address
+Configuring the rack awareness factor
+Selecting the type of security
